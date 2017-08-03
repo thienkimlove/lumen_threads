@@ -5,14 +5,14 @@ namespace App\Console\Commands;
 use App\Engine\TestThread;
 use Illuminate\Console\Command;
 
-class CorrectAddress extends Command
+class GoogleAddress extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'correct:address';
+    protected $signature = 'google:address';
 
     /**
      * The console command description.
@@ -39,16 +39,22 @@ class CorrectAddress extends Command
      */
     public function handle()
     {
-          $districts = app('db')->table('districts')
-              ->join('provinces', 'districts.province_id', '=', 'provinces.id')
-              ->join('address_codes', 'provinces.address_code_id', '=', 'address_codes.id')
-            ->selectRaw('districts.name as district_name, address_codes.address_name as province_name, districts.id as district_id,  "districts" as db_name')
-              ->whereNull('districts.address_code_id')
+          $districts = app('db')->table('address_codes as t1')
+              ->join('address_codes as t2', 't1.parent_id', '=', 't2.id')
+            ->selectRaw('t1.address_name as district_name, t2.address_name as province_name, t1.id as district_id, "address_codes" as db_name')
+            ->whereNotNull('t1.parent_id')
+            ->whereNull('t2.parent_id')
             ->get();
 
+          $stacks = [];
+
         foreach ($districts as $district) {
-            $threadedMethod = new TestThread($district);
-            $threadedMethod->start(PTHREADS_INHERIT_NONE);
+            $stacks[] = new TestThread($district);
         }
+
+        foreach ($stacks as $t) {
+            $t->start(PTHREADS_INHERIT_NONE);
+        }
+
     }
 }

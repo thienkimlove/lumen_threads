@@ -14,8 +14,9 @@ return [
     |
     */
     
-    'key'       => 'AIzaSyAWTakEEZ7a5VsmYkfGGxgEPVPQ4WPAzBM',
-        
+    //'key'       => 'AIzaSyAWTakEEZ7a5VsmYkfGGxgEPVPQ4WPAzBM',
+    'key'       => 'AIzaSyA89jfhKO6dsAPVb6PMMCO28DUHG9ODIbs',
+
     /*
     |--------------------------------------------------------------------------
     | Verify SSL Peer
